@@ -1,5 +1,6 @@
 package com.example.administrator.sqlitedemo;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +24,20 @@ public class DataActivity extends AppCompatActivity {
     private MyOpenHelper helper;
     //处理查询按钮
     public  void myQuery(View view){
+        //使用sql语句查询
         String sql="select * from user";
         //查询出来的数据,通过适配器的方式，显示在listview里面
         Cursor cursor = db.rawQuery(sql,null);
-       //更新数据
-         refresh(cursor);
+        //更新数据
+        refresh(cursor);
+        //使用特定方法查询数据--query
+        //Cursor cursor = db.query("user",new String []{"_id","name","password"},
+                                 //null,null,null,null,null);
+        //使用模糊查询
+       // String name = nameEt.getText().toString();
+        //select * from user where name like "%name%" order by name DESC;
+        //Cursor cursor=db.query("user",null,"name like ? ",new String[]{"%"+name+"%"},null,null,"name DESC");
+        //refresh(cursor);
     }
     //刷新listview中的数据
     public  void refresh(Cursor cursor){
@@ -50,9 +60,16 @@ public class DataActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 TextView tv=(TextView) view.findViewById(R.id.userId);
                 int id=Integer.parseInt(tv.getText().toString());
-                String sql = "delete from user where _id="+id;
-                db.execSQL(sql);
-                //更新数据
+                //使用sql语句删除数据
+                //String sql = "delete from user where _id="+id;
+                //db.execSQL(sql);
+                //使用特定方法删除数据
+                db.delete("user","_id=?",new String[]{id+""});
+                //更新表中数据
+                ContentValues values = new ContentValues();
+                values.put("password","1234567890");
+                db.update("user",values,"_id=?",new String[]{id+""});
+                //更新listview 的数据
                 String sql1="select * from user";
                 //查询出来的数据,通过适配器的方式，显示在listview里面
                 Cursor cursor = db.rawQuery(sql1,null);
@@ -65,12 +82,19 @@ public class DataActivity extends AppCompatActivity {
         //getFilesDir()获取应用程序的私有目录
         //db = SQLiteDatabase.openOrCreateDatabase(getFilesDir()+"/"+dbName ,null);
         helper=new MyOpenHelper(this,"user.db",null,1);
-         db=helper.getReadableDatabase();
-
+        db=helper.getReadableDatabase();
     }
     public void insert(SQLiteDatabase db,String name,String password){
-        String sql = "insert into user(name,password) values (?,?)";
-        db.execSQL(sql, new String[]{name, password});
+        //使用sql语句进行插入数据
+        //String sql = "insert into user(name,password) values (?,?)";
+        //db.execSQL(sql, new String[]{name, password});
+        //使用特定方法插入数据---insert（"表名","",字段名和值得映射）
+        ContentValues values = new ContentValues();
+        //key就是字段名，value就是值
+        values.put("name",name);
+        values.put("password",password);
+        //返回行是新插入数值的id
+        long id = db.insert("user",null,values);
     }
     //public void create(SQLiteDatabase db){
     // String sql = "create table user(_id integer primary key AUTOINCREMENT,name ,password)";
