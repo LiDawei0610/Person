@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -54,6 +53,7 @@ public class DataActivity extends AppCompatActivity {
         nameEt = ((EditText) findViewById(R.id.name));
         passwordEt = ((EditText) findViewById(R.id.pssword));
         listView = ((ListView) findViewById(R.id.list));
+
         //设置item的点击删除事件
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
